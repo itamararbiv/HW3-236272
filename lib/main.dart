@@ -6,7 +6,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import './providers/firebase_notifier.dart';
 import './screens/login_screen.dart';
-import './classes/MyUser.dart';
 import 'package:snapping_sheet/snapping_sheet.dart';
 
 void main() async {
@@ -68,7 +67,7 @@ class _RandomWordsState extends State<RandomWords> {
 
   @override
   Widget build(BuildContext context) {
-    bool checking = context.watch<FirebaseNotifier>().loginStatusChanged;
+    // bool checking = context.watch<FirebaseNotifier>().loginStatusChanged;
     context.watch<FirebaseNotifier>().localSaved.length;
     context.watch<FirebaseNotifier>().imageAmountChanges;
 
@@ -84,12 +83,12 @@ class _RandomWordsState extends State<RandomWords> {
           IconButton(
               icon: _icons[context.watch<FirebaseNotifier>().getUserStatus()],
               tooltip:
-                  _tooltip[context.watch<FirebaseNotifier>().getUserStatus()],
+              _tooltip[context.watch<FirebaseNotifier>().getUserStatus()],
               onPressed: () {
                 if (context.read<FirebaseNotifier>().getUserStatus() == 0) {
                   openLoginScreen();
-                  context.watch<FirebaseNotifier>().loginStatusChanged =
-                      !context.watch<FirebaseNotifier>().loginStatusChanged;
+                  context.read<FirebaseNotifier>().loginStatusChanged =
+                  !context.read<FirebaseNotifier>().loginStatusChanged;
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Successfully logged out')));
@@ -195,7 +194,7 @@ class _RandomWordsState extends State<RandomWords> {
       grabbingHeight: 45,
       sheetAbove: isSheetEnabled
           ? SnappingSheetContent(
-              child: const BlurredBackgroundMask(), draggable: false)
+          child: const BlurredBackgroundMask(), draggable: false)
           : null,
       sheetBelow: SnappingSheetContent(
           child: Container(
@@ -210,7 +209,7 @@ class _RandomWordsState extends State<RandomWords> {
                           backgroundColor: Colors.transparent,
                           radius: 40,
                           backgroundImage:
-                              context.watch<FirebaseNotifier>().avatarImage),
+                          context.watch<FirebaseNotifier>().avatarImage),
                     ),
                     Expanded(
                       flex: 1,
@@ -233,7 +232,7 @@ class _RandomWordsState extends State<RandomWords> {
                             height: 30,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.lightBlue,
+                                backgroundColor: Colors.lightBlue,
                               ),
                               onPressed: () => pickUpNewAvatar(),
                               child: const Text(
@@ -318,7 +317,7 @@ class _RandomWordsState extends State<RandomWords> {
       MaterialPageRoute<void>(
         builder: (context) {
           final tiles = context.watch<FirebaseNotifier>().localSaved.map(
-            (pair) {
+                (pair) {
               index = index + 1;
               return Dismissible(
                   confirmDismiss: (DismissDirection direction) async {
@@ -337,8 +336,8 @@ class _RandomWordsState extends State<RandomWords> {
                             TextButton(
                               onPressed: () {
                                 if (context
-                                        .read<FirebaseNotifier>()
-                                        .currentUser !=
+                                    .read<FirebaseNotifier>()
+                                    .currentUser !=
                                     null) {
                                   context
                                       .read<FirebaseNotifier>()
@@ -378,9 +377,9 @@ class _RandomWordsState extends State<RandomWords> {
           );
           final divided = tiles.isNotEmpty
               ? ListTile.divideTiles(
-                  context: context,
-                  tiles: tiles,
-                ).toList()
+            context: context,
+            tiles: tiles,
+          ).toList()
               : <Widget>[];
 
           return Scaffold(
@@ -403,20 +402,17 @@ class RandomWords extends StatefulWidget {
 }
 
 class _UserGrabbingWidget extends StatelessWidget {
-  Function() switchSheetStateFunc;
-  String userEmail = "";
+  Function() onOffStatus;
 
-  _UserGrabbingWidget(this.switchSheetStateFunc);
+  _UserGrabbingWidget(this.onOffStatus);
 
   @override
   Widget build(
-    BuildContext context,
-  ) {
-    userEmail =
-        Provider.of<FirebaseNotifier>(context, listen: true).currentUserEmail;
-
+      BuildContext context,
+      ) {
+    String currentUserMail = context.read<FirebaseNotifier>().currentUserEmail;
     return GestureDetector(
-        onTap: () => switchSheetStateFunc(),
+        onTap: () => onOffStatus(),
         child: Container(
           alignment: Alignment.centerLeft,
           color: const Color(0xFFCFD8DC),
@@ -428,7 +424,7 @@ class _UserGrabbingWidget extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                     horizontal: 20,
                   ),
-                  child: Text("Welcome back, $userEmail",
+                  child: Text("Welcome back, $currentUserMail",
                       textAlign: TextAlign.left,
                       style: const TextStyle(
                         color: Colors.black,
@@ -449,16 +445,10 @@ class BlurredBackgroundMask extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(
-          sigmaX: 2.5,
-          sigmaY: 2.5,
-        ),
-        child: Container(
-          color: Colors.transparent,
-        ),
+    return ClipRect(child: BackdropFilter(filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5,),
+      child: Container(color: Colors.transparent,
       ),
+    ),
     );
   }
 }
