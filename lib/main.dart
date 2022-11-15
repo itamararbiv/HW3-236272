@@ -67,7 +67,7 @@ class _RandomWordsState extends State<RandomWords> {
 
   @override
   Widget build(BuildContext context) {
-    // bool checking = context.watch<FirebaseNotifier>().loginStatusChanged;
+     bool checking = context.watch<FirebaseNotifier>().loginStatusChanged;
     context.watch<FirebaseNotifier>().localSaved.length;
     context.watch<FirebaseNotifier>().imageAmountChanges;
 
